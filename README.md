@@ -4,6 +4,6 @@ Our group is Sniff_my_packets_420 (Group 6). This repository contains some imple
 
 The main idea is that there are two corporate networks, one in Stockholm and one in London, and the employees from one site should be able to connect and communicate with the other site through a VPN connection (Site-to-Site), but also the employees should connect remotely (Client-to-Site)
 
-To implement this, we will use StrongSwan (IPsec) for Site-to-Site and WireGuard for Client-to-Site.
+To implement this, we used OpenVPN for both Site-to-Site and Client-to-Site connectivity.
 
 Of course, there will be a lot more stuff here, such as web servers, file sharing servers, CA servers, damn that's a lot.
