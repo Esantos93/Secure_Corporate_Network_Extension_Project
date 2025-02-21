@@ -1,0 +1,15 @@
+- name: Configure DD-WRT Router for OpenVPN
+  hosts: London
+  gather_facts: no
+  tasks:
+    - name: Allow port forwarding for OpenVPN
+      raw: |
+        iptables -I FORWARD -p udp -d 192.168.11.217 --dport 1194 -j ACCEPT
+        iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination 192.168.11.217:1194
+
+    - name: Save Firewall Rules
+      raw: |
+        echo "iptables -I FORWARD -p udp -d 192.168.11.217 --dport 1194 -j ACCEPT" >> /tmp/.rc_firewall
+        echo "iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination 192.168.11.217:1194" >> /tmp/.rc_firewall
+        nvram set rc_firewall="$(cat /tmp/.rc_firewall)"
+        nvram commit
