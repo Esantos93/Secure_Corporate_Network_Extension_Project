@@ -1,0 +1,18 @@
+- name: Configure DD-WRT Router
+  hosts: router
+  gather_facts: no  # Skip Python-based fact gathering
+  vars:
+    webserver_ip: "{{ lookup('env', 'WEBSERVER_IP') }}"
+  tasks:
+    - name: Set up port forwarding for Nginx
+      raw: |
+        nvram set portforward="80>{{ webserver_ip }}:80"
+        nvram commit
+        reboot
+
+    - name: Modify firewall rules to allow HTTP traffic
+      raw: |
+        iptables -I FORWARD -p tcp -d {{ webserver_ip }} --dport 80 -j ACCEPT
+        iptables-save > /tmp/firewall.rules
+        nvram set firewall_custom="$(cat /tmp/firewall.rules)"
+        nvram commit
