@@ -3,6 +3,26 @@
 # Define OpenVPN configuration directory
 OVPN_DIR="/tmp/openvpn"
 
+extract_cert() {
+    sed -n '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' "$1"
+}
+
+extract_key() {
+    sed -n '/-----BEGIN PRIVATE KEY-----/,/-----END PRIVATE KEY-----/p' "$1"
+}
+
+# Clear old OpenVPN settings
+nvram unset openvpn_ca
+nvram unset openvpn_crt
+nvram unset openvpn_key
+nvram commit
+
+# Store certificates and key in NVRAM using extracted values
+nvram set openvpn_ca="$(extract_cert $OVPN_DIR/ca.crt)"
+nvram set openvpn_crt="$(extract_cert $OVPN_DIR/cert.pem)"
+nvram set openvpn_key="$(extract_key $OVPN_DIR/key.pem)"
+nvram commit
+
 # Create the OpenVPN server configuration file
 cat <<EOF > "$OVPN_DIR/openvpn.conf"
 ca /tmp/openvpn/ca.crt
@@ -49,9 +69,9 @@ iptables -A FORWARD -i $(nvram get wan_iface) -o tun2 -j ACCEPT
 
 # Apply configuration and restart OpenVPN
 echo "Restarting OpenVPN..."
+nvram commit
 stopservice openvpn
 startservice openvpn
 
 echo "OpenVPN Server Setup Completed!"
 echo "Rebooting..."
-reboot

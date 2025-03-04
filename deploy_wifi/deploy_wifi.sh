@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROUTER_IP="192.168.11.1"
+ROUTER_IP="192.168.10.1"
 USER="root"
 SCRIPT="set_password.sh"
 
