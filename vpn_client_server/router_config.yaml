@@ -1,3 +1,5 @@
+# script using the raw module because no python interpreter is installed on DD-WRT routers
+# It makes sure rules are not added if they already exists
 - name: Configure DD-WRT Router for OpenVPN
   hosts: Stockholm
   gather_facts: no
@@ -6,12 +8,20 @@
   tasks:
     - name: Allow port forwarding for OpenVPN
       raw: |
-        iptables -I FORWARD -p udp -d {{ vpn_server_ip }} --dport 1194 -j ACCEPT
-        iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination {{ vpn_server_ip }}:1194
+        if ! iptables -C FORWARD -p udp -d {{ vpn_server_ip }} --dport 1194 -j ACCEPT 2>/dev/null; then
+          iptables -I FORWARD -p udp -d {{ vpn_server_ip }} --dport 1194 -j ACCEPT
+        fi
+        if ! iptables -t nat -C PREROUTING -p udp --dport 1194 -j DNAT --to-destination {{ vpn_server_ip }}:1194 2>/dev/null; then
+          iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination {{ vpn_server_ip }}:1194
+        fi
 
     - name: Save Firewall Rules
       raw: |
-        echo "iptables -I FORWARD -p udp -d {{ vpn_server_ip }} --dport 1194 -j ACCEPT" >> /tmp/.rc_firewall
-        echo "iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination {{ vpn_server_ip }}:1194" >> /tmp/.rc_firewall
+        if ! grep -q "iptables -I FORWARD -p udp -d {{ vpn_server_ip }} --dport 1194 -j ACCEPT" /tmp/.rc_firewall; then
+          echo "iptables -I FORWARD -p udp -d {{ vpn_server_ip }} --dport 1194 -j ACCEPT" >> /tmp/.rc_firewall
+        fi
+        if ! grep -q "iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination {{ vpn_server_ip }}:1194" /tmp/.rc_firewall; then
+          echo "iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination {{ vpn_server_ip }}:1194" >> /tmp/.rc_firewall
+        fi
         nvram set rc_firewall="$(cat /tmp/.rc_firewall)"
         nvram commit

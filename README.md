@@ -150,8 +150,8 @@ docker run -v ~/openvpn-data:/etc/openvpn -d -p 1194:1194/udp --cap-add=NET_ADMI
 
 ## Forwarding rules
 
-iptables -I FORWARD -p udp -d 192.168.11.1 --dport 1194 -j ACCEPT \
-iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination 192.168.11.X:1194
+iptables -I FORWARD -p udp -d 192.168.10.1 --dport 1194 -j ACCEPT \
+iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination 192.168.10.X:1194
 
 ## Generate VPN Client Profiles
 
@@ -159,6 +159,9 @@ Each client must have a different OpenVPN configuration file containing its priv
 
 docker run -v ~/openvpn-data:/etc/openvpn --rm -it kylemanna/openvpn easyrsa build-client-full CLIENTNAME nopass \
 docker run -v ~/openvpn-data:/etc/openvpn --rm kylemanna/openvpn ovpn_getclient CLIENTNAME > ./CLIENTNAME.ovpn
+
+Set up DNS manually (add the following line to the OpenVPN client configuration file):\
+<code>dhcp-option DNS 192.168.10.56</code>
 
 ## Connect to OpenVPN
 

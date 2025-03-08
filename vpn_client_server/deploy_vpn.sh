@@ -4,9 +4,9 @@
 # Configuration
 DOCKER_IMAGE="kylemanna/openvpn"
 OVPN_DATA_DIR="./openvpn-data"
-#PUBLIC_IP="smp420.duckdns.org"
-PUBLIC_IP="130.237.11.43"
-CLIENT_NAME="CLIENTNAME"
+PUBLIC_IP="sniffstockholm.duckdns.org"
+#PUBLIC_IP="130.237.11.45"
+CLIENT_NAME="CLIENTTEST"
 
 # Detect the local IP of the machine within 192.168.10.0/24
 LOCAL_IP=$(ip -4 addr show | grep -oP '192\.168\.10\.\d+' | head -n 1)
@@ -59,8 +59,11 @@ docker run -v $OVPN_DATA_DIR:/etc/openvpn --rm -it $DOCKER_IMAGE easyrsa build-c
 echo "Retrieving client configuration..."
 docker run -v $OVPN_DATA_DIR:/etc/openvpn --rm $DOCKER_IMAGE ovpn_getclient $CLIENT_NAME > ~/${CLIENT_NAME}.ovpn
 
+# Step 8: Append custom DNS configuration
+echo "Adding custom DNS setting to client configuration..."
+echo "dhcp-option DNS 192.168.10.56" >> ~/${CLIENT_NAME}.ovpn
+
 echo "OpenVPN server is deployed and client config is ready at ~/${CLIENT_NAME}.ovpn"
-echo "configuring forwarding rules"
 
 ansible-playbook -i inventory.ini router_config.yaml -e "vpn_ip=$LOCAL_IP"
 
