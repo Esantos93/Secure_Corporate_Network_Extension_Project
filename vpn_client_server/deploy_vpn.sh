@@ -6,7 +6,7 @@ DOCKER_IMAGE="kylemanna/openvpn"
 OVPN_DATA_DIR="./openvpn-data"
 PUBLIC_IP="sniffstockholm.duckdns.org"
 #PUBLIC_IP="130.237.11.45"
-CLIENT_NAME="CLIENTTEST"
+CLIENT_NAME="CLIENTTEST1"
 
 # Detect the local IP of the machine within 192.168.10.0/24
 LOCAL_IP=$(ip -4 addr show | grep -oP '192\.168\.10\.\d+' | head -n 1)
@@ -28,7 +28,6 @@ if [[ -n "$EXISTING_CONTAINER" ]]; then
 fi
 
 
-
 # Step 1: Pull the Docker Image
 echo "Pulling OpenVPN Docker image..."
 docker pull $DOCKER_IMAGE
@@ -42,11 +41,14 @@ echo "Generating OpenVPN configuration..."
 sudo rm -rf ./openvpn-data/*
 docker run -v $OVPN_DATA_DIR:/etc/openvpn --rm $DOCKER_IMAGE ovpn_genconfig -u udp://$PUBLIC_IP
 
-# Step 4: Initialize the PKI and CA
+# Step 4: Initialize the PKI and CA and CRL
 echo "Initializing PKI and generating CA..."
 docker run -v $OVPN_DATA_DIR:/etc/openvpn --rm -it $DOCKER_IMAGE ovpn_initpki
 
-# Step 5: Deploy the OpenVPN Server
+## CRL
+docker run -v $OVPN_DATA_DIR:/etc/openvpn --rm -it $DOCKER_IMAGE easyrsa gen-crl
+
+# Step 5: Deploy the OpenVPN Server and modify openvpn.conf file
 echo "Starting OpenVPN server..."
 docker run -v $OVPN_DATA_DIR:/etc/openvpn -d -p 1194:1194/udp --cap-add=NET_ADMIN $DOCKER_IMAGE
 

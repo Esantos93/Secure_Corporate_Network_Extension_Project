@@ -1,6 +1,14 @@
 DOCKER_IMAGE="kylemanna/openvpn"
 OVPN_DATA_DIR="./openvpn-data"
-CLIENT_NAME="CLIENTTEST1"
+
+# Check if a client name is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <CLIENT_NAME>"
+    exit 1
+fi
+
+CLIENT_NAME="$1"
+
 
 # Generate Client Certificates
 echo "Generating client certificate for $CLIENT_NAME..."
