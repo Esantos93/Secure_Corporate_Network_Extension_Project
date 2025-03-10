@@ -25,12 +25,12 @@ yes | ./easyrsa build-ca nopass
 # Generate Server Certificate
 echo "Generating Server Certificate..."
 yes | ./easyrsa gen-req server-g6 nopass
-yes | ./easyrsa sign-req server server-g6
+./easyrsa sign-req server server-g6
 
 # Generate Client Certificate
 echo "Generating Client Certificate..."
 yes | ./easyrsa gen-req client-g6 nopass
-yes | ./easyrsa sign-req client client-g6
+./easyrsa sign-req client client-g6
 
 # Generate Diffie-Hellman Parameters (Not needed as we're using ECDH)
 echo "Skipping DH parameters (using ECDH instead)..."

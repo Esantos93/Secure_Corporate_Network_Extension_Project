@@ -1,2 +1,4 @@
 .env
 vpn_tunnel_setup/easy-rsa
+vpn_client_server/openvpn-data
+vpn_client_server/CLIENTNAME.openvpn

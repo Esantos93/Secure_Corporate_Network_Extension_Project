@@ -6,8 +6,6 @@ ROUTER_IP="192.168.10.1"
 REMOTE_DIR="/tmp/openvpn"
 SCRIPT_SETUP="stockholm_ovpn_setup.sh"
 
-bash generate_certs.sh
-
 # Ensure OpenVPN is enabled and create directory on the router
 echo "Enabling OpenVPN and creating directory on the router..."
 ssh -o StrictHostKeyChecking=no -i "~/.ssh/bnss" "$ROUTER_USER@$ROUTER_IP" << EOF
