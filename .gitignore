@@ -2,3 +2,17 @@
 vpn_tunnel_setup/easy-rsa
 vpn_client_server/openvpn-data
 vpn_client_server/CLIENTNAME.openvpn
+authelia-freeipa/api/node_modules
+authelia-freeipa/api/.expo
+authelia-freeipa/webserver/index-OLD.js
+authelia-freeipa/.DS_Store
+authelia-freeipa/.env*
+authelia-freeipa/db.env
+authelia-freeipa/old
+authelia-freeipa/certs
+authelia-freeipa/users_database.yml
+authelia-freeipa/others_irrelevant
+traefik/certs
+authelia.crt
+traefik.toml
+README.md

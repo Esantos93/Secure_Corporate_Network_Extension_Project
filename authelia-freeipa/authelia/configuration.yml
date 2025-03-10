@@ -1,0 +1,151 @@
+---
+###############################################################
+#                   Authelia configuration                    #
+###############################################################
+
+jwt_secret: a_very_important_secret
+default_redirection_url: https://webserver.acme.local
+
+server:
+  host: 0.0.0.0
+  port: 9091
+
+log:
+  level: debug
+
+theme: 'dark'
+
+certificates_directory: '/config/certs/'
+
+# TOTP configuration for 2FA
+totp:
+  issuer: 'ACME Authelia'
+  period: 30
+  skew: 1
+  algorithm: 'sha1'
+  digits: 6
+  secret_size: 32
+  allowed_algorithms:
+    - 'SHA1'
+  allowed_digits:
+    - 6
+  allowed_periods:
+    - 30
+  disable_reuse_security_policy: false
+
+# For 2FA without email, we'll use file-based authentication with TOTP
+authentication_backend:
+  # file:
+  #   path: /config/users_database.yml
+  #   password:
+  #     algorithm: argon2id
+  #     iterations: 1
+  #     key_length: 32
+  #     salt_length: 16
+  #     memory: 1024
+  #     parallelism: 8
+    ldap:
+      implementation: custom
+      url: ldaps://192.168.10.56
+      start_tls: false
+      tls:
+        server_name: freeipa.acme.local
+        skip_verify: true
+        minimum_version: TLS1.2
+
+      base_dn: dc=acme,dc=local
+      username_attribute: uid
+      additional_users_dn: cn=users,cn=accounts
+      users_filter: (&({username_attribute}={input})(objectClass=person))
+      additional_groups_dn: cn=groups,cn=accounts
+      groups_filter: (&(member=uid={input},cn=users,cn=accounts,dc=acme,dc=local)(objectclass=groupofnames))
+      group_name_attribute: cn
+      mail_attribute: mail
+      display_name_attribute: givenName
+      user: uid=admin,cn=users,cn=accounts,dc=acme,dc=local
+      password: IpaManager420!
+
+# Updated access control to use two_factor for sensitive areas
+access_control:
+  default_policy: deny
+  networks:
+    - name: 'Stockholm'
+      networks:
+        - '192.168.10.0/24'  # Allow all IPs in the 192.168.10.0/24 (Stockholm) subnet
+    - name: 'London'
+      networks:
+        - '192.168.11.0/24'  # Allow all IPs in the 192.168.11.0/24 (London) subnet
+    - name: 'VPN'
+      networks:
+        - '192.168.10.85/32'  # IPs in the VPN subnet
+  
+  rules:
+    # Allow access to traefik dashboard from Stockholm network without authentication
+    - domain: traefik.acme.local
+      policy: one_factor
+      subject: "group:admins"
+      networks:
+        - 'Stockholm'
+        - 'London'
+        - 'VPN'
+
+    - domain: nextcloud.acme.local
+      policy: one_factor
+      networks:
+        - 'VPN'
+    
+    - domain: nextcloud.acme.local
+      policy: bypass
+      networks:
+        - 'Stockholm'
+        - 'London'
+        - 'VPN'
+
+    - domain: webserver.acme.local
+      policy: deny
+      networks:
+        - 'VPN'
+    
+      # Require two-factor for frontend except for company devices with certificates
+    - domain: webserver.acme.local
+      policy: two_factor
+      networks:
+        - 'London'
+        - 'Stockholm'
+    
+    # Add a rule for the API that the mobile app will use
+    - domain: api.acme.local
+      policy: bypass
+      networks:
+        - 'Stockholm'
+        - 'London'
+        - 'VPN'
+# Configure session management
+session:
+  name: authelia_session
+  secret: unsecure_session_secret
+  expiration: 3600  # 1 hour
+  inactivity: 300  # 5 minutes
+  domain: acme.local  # Should match whatever your root protected domain is
+  # Allow cookies to be used in WebView
+  same_site: lax
+
+# Configure regulation to prevent brute force attacks
+regulation:
+  max_retries: 3
+  find_time: 120
+  ban_time: 300
+
+# Configure storage for user information including 2FA credentials
+storage:
+  encryption_key: you_must_generate_a_random_string_of_more_than_twenty_chars_and_configure_this
+  local:
+    path: /config/db.sqlite3
+
+# Instead of using email for TOTP registration, we'll use the Authelia web UI
+# Users will register their TOTP device directly through the Authelia portal
+notifier:
+  disable_startup_check: true
+  filesystem:
+    filename: /config/notification.txt
+...

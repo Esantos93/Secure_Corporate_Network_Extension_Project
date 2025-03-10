@@ -1,0 +1,44 @@
+Date: 2025-03-07 15:43:07.290912588 +0330 +0330 m=+38.917037645
+Recipient: {Administrator christoforosseas@gmail.com}
+Subject: Confirm your identity
+A ONE-TIME CODE HAS BEEN GENERATED TO COMPLETE A REQUESTED ACTION
+
+Hi Administrator,
+
+This notification has been sent to you in order to verify your identity to
+change security details for your account at acme.local.
+
+Do not share this notification or the content of this notification with anyone.
+
+The following one-time code should only be used in the prompt displayed in your
+browser.
+
+--------------------------------------------------------------------------------
+
+MJDY3NYN
+
+--------------------------------------------------------------------------------
+
+If you did not initiate the process your credentials may have been compromised
+and you should:
+
+ 1. Revoke this code using the provided links below
+ 2. Reset your password or other login credentials
+ 3. Contact an Administrator
+
+Revoke https://authelia.acme.local/revoke/one-time-code?id=rAQA76sjSiy12R19vzlXNw
+
+To revoke the code click the above button or alternatively copy and paste this
+URL into your browser:
+
+https://authelia.acme.local/revoke/one-time-code?id=rAQA76sjSiy12R19vzlXNw https://authelia.acme.local/revoke/one-time-code?id=rAQA76sjSiy12R19vzlXNw
+
+--------------------------------------------------------------------------------
+
+This notification was intended for Administrator. This one-time code was
+generated due to an action from 192.168.65.1. If you do not believe that your
+actions could have triggered this event or if you are concerned about your
+account's safety, please follow the explicit directions in this notification.
+
+Powered by Authelia https://www.authelia.com
+

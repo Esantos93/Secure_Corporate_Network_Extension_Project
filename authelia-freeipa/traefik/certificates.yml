@@ -1,0 +1,8 @@
+---
+tls:
+  certificates:
+    - certFile: /etc/traefik/certs/traefik-cert.pem
+      keyFile: /etc/traefik/certs/traefik-key.pem
+    - certFile: /etc/traefik/certs/nextcloud-cert.pem
+      keyFile: /etc/traefik/certs/nextcloud-key.pem
+

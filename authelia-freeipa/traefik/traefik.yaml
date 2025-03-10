@@ -1,0 +1,45 @@
+entryPoints:
+  http:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: "https"
+          scheme: "https"
+  https:
+    address: ":443"
+  web:
+    forwardedHeaders:
+      trustedIPs:
+        - "192.168.10.0/24"
+        - "192.168.11.0/24"
+        - "192.168.255.0/24"
+        - "192.168.65.0/24"  # Trust Docker Desktop network
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: "net"
+  file:
+    filename: "/etc/traefik/config.yaml"
+
+api:
+  dashboard: true
+  insecure: false
+  debug: true
+
+log:
+  level: "DEBUG"
+
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/traefik/certs/wildcard-services-cert.pem
+        keyFile: /etc/traefik/certs/wildcard-services-key.pem
+
+
+  # certificates:
+  #   - certFile: "/etc/traefik/certs/cert.pem"
+  #     keyFile: "/etc/traefik/certs/key.pem"

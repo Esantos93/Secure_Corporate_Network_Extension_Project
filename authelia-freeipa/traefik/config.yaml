@@ -1,0 +1,65 @@
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/traefik/certs/wildcard-services-cert.pem
+        keyFile: /etc/traefik/certs/wildcard-services-key.pem
+        
+
+  # certificates:
+  #   - certFile: "/etc/traefik/certs/cert.pem"
+  #     keyFile: "/etc/traefik/certs/key.pem"
+
+http:
+  routers:
+    pve1:
+      entryPoints:
+        - "https"
+      rule: "Host(`prometheus.acme.local`)"
+      middlewares:
+        - authelia
+        - default-headers
+      tls: {}
+      service: pve1
+
+  services:
+    pve1:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.10.56:9090"
+        passHostHeader: true
+
+  middlewares:
+    https-redirect:
+      redirectScheme:
+        scheme: https
+
+    authelia:
+      forwardAuth:
+        address: "http://authelia:9091/api/verify?rd=https://authelia.acme.local"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "Remote-User"
+          - "Remote-Groups"
+          - "Remote-Name"
+          - "Remote-Email"
+    
+    default-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+
+    secured:
+      chain:
+        middlewares:
+        - default-whitelist
+        - default-headers
