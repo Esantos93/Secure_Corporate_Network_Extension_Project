@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if the script is run with exactly 3 arguments
-if [[ "$#" -ne 3 ]]; then 
+if [[ "$#" -ne 2 && "$#" -ne 3 ]]; then 
   echo "Usage: ./create-csr.sh <FreeIPA Admin Password> <Principal> <Service>"
   echo "Principal: the name of the user or FQDN of the host"
   echo "Service: service for the certificate. Leave blank for user certificate"
@@ -28,11 +28,11 @@ openssl req -new -newkey rsa:2048 -nodes -keyout "${principal}.key" -out "${prin
 echo "$admin_passphrase" | kinit admin
 
 # Submit the CSR for signing by the FreeIPA CA
-ipa cert-request "${principal}.csr" --principal="$cert_principal" 
+ipa cert-request "${principal}.csr" --principal="$cert_principal" --certificate-out="${principal}.crt"
 
 # Get the ca certificate from FreeIPA if it's not already available
 if [[ ! -f ./ca.crt ]]; then
-  ipa cert-show 0 --out=ca.crt
+  ipa cert-show 1 --out=ca.crt
 fi
 
 openssl pkcs12 -export -in "${principal}".crt -inkey "${principal}".key -certfile ca.crt -out "${principal}"_PKCS12.pfx
