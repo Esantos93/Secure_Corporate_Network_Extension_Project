@@ -1,6 +1,6 @@
-# BNSS_Project: Overview
+# Building Networked Systems Security Project: Overview
 
-This is a project for BNSS course (EP2520) in KTH. This repository contains some implementation scripts and code.
+This is a project for the BNSS course (EP2520) in KTH. This repository contains some implementation scripts and code. Link to the course [here](https://www.kth.se/student/kurser/kurs/EP2520?l=en)
 
 
 # Routers Configuration
