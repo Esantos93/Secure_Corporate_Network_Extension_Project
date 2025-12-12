@@ -1,9 +1,11 @@
-# BNSS_Project
+# BNSS_Project: Overview
+
 This is a project for BNSS course (EP2520) in KTH. This repository contains some implementation scripts and code.
 
 
-# flashing routers:
-## DD-WRT
+# Routers Configuration
+
+## DD-WRT Firmware
 Router model: Asus RT-AC68U
 
 download firmware at: \
@@ -18,7 +20,7 @@ brick router:
 
 After upgrading firmware with correct version of DD-WRT, not prompted to change credentials. Not able to access control panel so tried login/pass 3 times after stuck (ban). Tried hard reset by holding reset 30 sec, unplugging, holding 30 more sec, plugging, holding 30 more sec. Ended up in recovery mode.
 
-# Change to Merlin-WRT
+## Change to Merlin-WRT
 
 Download stock ASUS firmware at\
 https://www.asus.com/networking-iot-servers/wifi-routers/asus-wifi-routers/rtac68u/helpdesk_bios/?model2Name=RTAC68U
@@ -57,7 +59,7 @@ Wait for 10 min. Then power off/on the router. LED should be blue again.
 Connect to 192.168.1.1 should work
 
 
-# Add ssh key to router and connect
+## Add ssh key to router and connect
 
 Go to web interface to add the ssh key (have to find an automated way)
 
@@ -114,10 +116,10 @@ connect to London, then run\
 wait for the routers to reboot. The VPN tunnel is now set up.
 
 
-# OpenVPN client-server setup
+## OpenVPN client-server setup
 
 
-## Pull docker image and configure OpenVPN
+### Pull docker image and configure OpenVPN
 <code>docker pull kylemanna/openvpn\
 mkdir -p openvpn-data\
 docker run -v openvpn-data:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://130.237.11.52\
@@ -125,14 +127,15 @@ docker run -v openvpn-data:/etc/openvpn --rm -it kylemanna/openvpn ovpn_initpki\
 docker run -v ~/openvpn-data:/etc/openvpn -d -p 1194:1194/udp --cap-add=NET_ADMIN kylemanna/openvpn</code>
 
 
-## Forwarding rules
+### Forwarding rules
 
 <code>iptables -I FORWARD -p udp -d 192.168.10.1 --dport 1194 -j ACCEPT \
 iptables -t nat -A PREROUTING -p udp --dport 1194 -j DNAT --to-destination 192.168.10.X:1194</code>
 
 Replace X with the static IP of the VPN server.
 
-## Generate VPN Client Profiles
+
+### Generate VPN Client Profiles
 
 Each client must have a different OpenVPN configuration file containing its private key and certificate.
 
@@ -143,12 +146,12 @@ docker run -v ~/openvpn-data:/etc/openvpn --rm kylemanna/openvpn ovpn_getclient 
 Set up DNS manually (add the following line to the OpenVPN client configuration file):\
 <code>dhcp-option DNS 192.168.10.56</code>
 
-## Connect to OpenVPN
+### Connect to OpenVPN
 
 <code>sudo openvpn --config CLIENTNAME.ovpn </code>
 
 
-## Automating OpenVPN setup
+### Automating OpenVPN setup
 
 
 sudo apt update\
@@ -158,12 +161,23 @@ sudo apt install ansible
 2) run deploy_vpn.sh: <code>bash deploy_vpn.sh</code> 
 
 
-## Install OpenVPN app for android
+### Install OpenVPN app for android
 
 - go to play store
 - search for OpenVPN for android
 - open the app, click the + button, name the VPN and import client file
 - You should receive an IP in the range 192.168.255.0/24
+
+# IDS & SIEM
+
+## Intrusion Detection System
+
+As IDS our group has decided to use Snort3. In order to check on the traffic running on both branches, 2 instances of Snort3 will be running in parallel. Port Mirroring has been implented on the router via iptables (-TEE) and ebtables. With the port mirroring implemented, Snort is able to get a copy of every packet going through the network, from both external and internal sources to the LAN. The rules set used by Snort is based on the public set Light SPD. Via scripting this ruleset has been filtered to only apply rules whose objective is the DNS and DoS-attacks detection. For further implementation details see the [Final Report](https://github.com/cseas002/BNSS_Project/blob/main/Final%20Report.pdf). 
+
+
+## Security Information and Event Management
+
+As SIEM tool we have used Splunk. For further implementation details see the [Final Report](https://github.com/cseas002/BNSS_Project/blob/main/Final%20Report.pdf). 
 
 
 # SYN Flood DoS simulation
