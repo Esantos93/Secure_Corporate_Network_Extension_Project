@@ -2,6 +2,7 @@
 
 This is a project for the BNSS course (EP2520) in KTH. This repository contains some implementation scripts and code. Link to the course [here](https://www.kth.se/student/kurser/kurs/EP2520?l=en)
 
+For a detailed description of the project objectives, please open the [Project Description](https://github.com/Esantos93/BNSS_Project_Group6/blob/main/Project%20Description.pdf)
 
 # Routers Configuration
 
