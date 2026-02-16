@@ -34,7 +34,7 @@ In theory, we could upload the stock firmware using the WEB GUI, though it seems
 In recovery mode (necessary mode to flash new firmware apparently), DHCP is disabled, so we have to disable it on our local computer and then set a static IPv4 address 192.168.1.X
 
 
-Unplugg WAN cable !!!!!!
+Unplugg WAN cable !
 
 - Put router into recovery mode (turn it on while pressing the reset button)
 - use tftp or the mini ASUS Web server to flash the asus stock firmware
