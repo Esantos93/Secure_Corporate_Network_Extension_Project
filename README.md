@@ -2,7 +2,7 @@
 
 This is a project for the BNSS course (EP2520) in KTH. This repository contains some implementation scripts and code. Link to the course [here](https://www.kth.se/student/kurser/kurs/EP2520?l=en)
 
-For a detailed description of the project objectives, please open the [Project Description](https://github.com/Esantos93/BNSS_Project_Group6/blob/main/Project%20Description.pdf)
+For a detailed description of the project objectives, please open the [Project Description.pdf](https://github.com/Esantos93/Secure_Corporate_Network_Extension_Project/blob/main/Project%20Description.pdf)
 
 # Routers Configuration
 
@@ -173,12 +173,12 @@ sudo apt install ansible
 
 ## Intrusion Detection System
 
-As IDS our group has decided to use Snort3. In order to check on the traffic running on both branches, 2 instances of Snort3 will be running in parallel. Port Mirroring has been implented on the router via iptables (-TEE) and ebtables. With the port mirroring implemented, Snort is able to get a copy of every packet going through the network, from both external and internal sources to the LAN. The rules set used by Snort is based on the public set Light SPD. Via scripting this ruleset has been filtered to only apply rules whose objective is the DNS and DoS-attacks detection. For further implementation details see the [Final Report](https://github.com/cseas002/BNSS_Project/blob/main/Final%20Report.pdf). 
+As IDS our group has decided to use Snort3. In order to check on the traffic running on both branches, 2 instances of Snort3 will be running in parallel. Port Mirroring has been implented on the router via iptables (-TEE) and ebtables. With the port mirroring implemented, Snort is able to get a copy of every packet going through the network, from both external and internal sources to the LAN. The rules set used by Snort is based on the public set Light SPD. Via scripting this ruleset has been filtered to only apply rules whose objective is the DNS and DoS-attacks detection. For further implementation details see the [Final Report](https://github.com/Esantos93/Secure_Corporate_Network_Extension_Project/blob/main/Final%20Report.pdf).
 
 
 ## Security Information and Event Management
 
-As SIEM tool we have used Splunk. For further implementation details see the [Final Report](https://github.com/cseas002/BNSS_Project/blob/main/Final%20Report.pdf). 
+As SIEM tool we have used Splunk. For further implementation details see the [Final Report](https://github.com/Esantos93/Secure_Corporate_Network_Extension_Project/blob/main/Final%20Report.pdf). 
 
 
 # SYN Flood DoS simulation
